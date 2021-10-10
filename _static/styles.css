@@ -1,0 +1,98 @@
+/* Stylesheet file for StartPage */
+
+@import url("https://fonts.googleapis.com/css2?family=Raleway:wght@300;700&display=swap");
+
+body {
+  font-family: "Raleway", sans-serif;
+}
+
+#check-agreement {
+  background-color: gray;
+}
+
+.popup .overlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+  display: none;
+}
+
+.popup .content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: #fff;
+  width: 350px;
+  height: 220px;
+  text-align: center;
+  align-items: center;
+  font-size: 10;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 30px;
+  z-index: 2;
+}
+
+.popup.active .overlay {
+  display: block;
+}
+
+.popup.active .content {
+  transition: all 300ms ease-in-out;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.confirm-btn-container {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.reject-btn-container {
+  margin-top: 10px;
+}
+
+.welcome-text {
+  font-size: 10;
+}
+
+.checkbox-agreement {
+  cursor: pointer;
+}
+
+.game-rules {
+  margin-bottom: 20px;
+}
+
+.game-rules-bottom {
+  display: flex;
+  flex-direction: row;
+}
+
+.gif-container {
+  margin-left: 150px;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+#confirm-btn {
+  border-color: rgb(223, 222, 222);
+  border-radius: 10px;
+}
+
+#reject-btn {
+  border-color: rgb(223, 222, 222);
+  border-radius: 10px;
+}
+
+.otree-btn-next {
+  margin-top: 20px;
+}

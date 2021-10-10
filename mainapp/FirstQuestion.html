@@ -1,0 +1,41 @@
+{{ block title }}
+    <title>
+        Question #1
+    </title>
+{{ endblock }}
+
+{{ block scripts }}
+    <script type="text/javascript" async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script>
+
+        document.querySelector('label.col-form-label').innerHTML = "Предложите чему равно данное выражение: "
+
+        let timer
+        let seconds = 10
+        countdown()
+
+        function countdown() {
+            document.querySelector("#timer-text").innerHTML = `Осталось ${seconds} секунд`
+            seconds--
+            if (seconds<0) {
+                clearTimeout(timer)
+            } else {
+                timer = setTimeout(countdown, 1000);
+            }
+        }
+        
+    </script>
+
+{{ endblock }}
+
+{{ block style }}
+
+{{ endblock }}
+
+{{ block content }}
+
+    <p><span class="math display">\[y = (1065310-3965)^{2}+7065903-90574509+\log_{4}{262141}\]</span></p>
+    <div class="timer-container"><h1 id="timer-text">Осталось 10 секунд</h1></div>
+    {{ formfields }}
+    {{ next_button }}
+{{ endblock }}
