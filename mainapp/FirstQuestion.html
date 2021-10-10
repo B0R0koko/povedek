@@ -2,39 +2,43 @@
     <title>
         Question #1
     </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.css" integrity="sha384-ysFyB7Is//Q1JNgERb0bLJokXKM8eWJsjEutGvthoHtBilHWgbdmbYkQZdwCIGIq" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.js" integrity="sha384-UWjC+k927Mtx6WQF5SzKTXLLrOYmzs69HvkUjiKvUwSOljzc+C6PrGquNpOvJBBo" crossorigin="anonymous"></script>
 {{ endblock }}
 
 {{ block scripts }}
-    <script type="text/javascript" async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    {% load static %}
+    <script src="{% static 'qscript.js' %}"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css" integrity="sha384-zTROYFVGOfTw7JV7KUu8udsvW2fx4lWOsCEDqhBreBwlHI4ioVRtmIvEThzJHGET" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.js" integrity="sha384-GxNFqL3r9uRJQhR+47eDxuPoNE7yLftQM8LcxzgS4HT73tp970WS/wV5p8UzCOmb" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"></script>
     <script>
-
-        document.querySelector('label.col-form-label').innerHTML = "Предложите чему равно данное выражение: "
-
-        let timer
-        let seconds = 10
-        countdown()
-
-        function countdown() {
-            document.querySelector("#timer-text").innerHTML = `Осталось ${seconds} секунд`
-            seconds--
-            if (seconds<0) {
-                clearTimeout(timer)
-            } else {
-                timer = setTimeout(countdown, 1000);
-            }
-        }
-        
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+            // customised options
+            // • auto-render specific keys, e.g.:
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            // • rendering keys, e.g.:
+            throwOnError : false
+            });
+        });
     </script>
-
 {{ endblock }}
 
 {{ block style }}
-
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'q1styles.css' %}">
 {{ endblock }}
 
 {{ block content }}
 
-    <p><span class="math display">\[y = (1065310-3965)^{2}+7065903-90574509+\log_{4}{262141}\]</span></p>
+    $$ y = (1065310-3965)^{2}+7065903-90574509+\log_{4}{262141} $$
     <div class="timer-container"><h1 id="timer-text">Осталось 10 секунд</h1></div>
     {{ formfields }}
     {{ next_button }}
