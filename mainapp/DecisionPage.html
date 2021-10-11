@@ -1,0 +1,46 @@
+{{ block title }}
+    <title>
+        Results
+    </title>
+{{ endblock }}
+
+{{ block scripts }}
+    <script>
+        // document.querySelector('label.col-form-label').innerHTML = "Введите ответ сюда:"
+        // document.querySelector('#id_number_passed').value = ""
+    </script>
+{{ endblock }}
+
+{{ block styles }}
+    {% load static %}
+        <link rel="stylesheet" href="{% static 'styles/qstyles.css' %}">
+{{ endblock }}
+
+{{ block content }}
+    {{ if player.id_in_group == 1 }}
+        <div>
+            <p><b>Раунд 5 завершён. Игра окончена.</b></p>
+            <p>Вы выиграли <b>{{ player.total_payoff }}</b> очков!</p>
+            <p>Ваш соперник выиграл <b>{{ second_player_payoff }}</b> очков</p>
+        </div>
+        <div>
+            <p>
+                Но сейчас мы предоставляем вам возможность определить, какую в итоге
+                сумму очков получите Вы, а какой ваш соперник. 
+            </p>
+            <ul>
+                <li>Соперник узнает только ту сумму очков, которую укажете вы.</li>
+                <li>Соперник не узнает, что мы давали вам возможность распределить очки по вашему усмотрению.</li>
+                <li>Соперник не узнает, сколько раундов он выиграл на самом деле.</li>
+        </div>
+    {{ else }}
+        <div>
+            <p>
+                Раунд 5 завершён. Игра окончена. Идёт подсчёт очков. 
+                <b>Пожалуйста, не закрывайте страницу! Эксперимент не завершён!</b>
+            </p>
+        </div>
+    {{ endif }}
+    {{ formfields }}
+    {{ next_button }}
+{{ endblock }}
