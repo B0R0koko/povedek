@@ -21,6 +21,9 @@
             justify-content: center;
             margin-top: 30px;
         }
+        .form-container {
+            margin-top: 50px;
+        }
     </style>
 {{ endblock }}
 
@@ -40,6 +43,10 @@
         <div class="gif-container">
             <img src="https://acegif.com/wp-content/uploads/thumbs-up-78.gif" alt="Тут должна быть гифка" width="500">
         </div>
+    </div>
+    <div class="form-container">
+        {{ formfields }}
+        {{ next_button }}
     </div>
 
 {{ endblock }}

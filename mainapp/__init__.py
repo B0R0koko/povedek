@@ -1,3 +1,4 @@
+from os import stat
 from otree.api import *
 
 
@@ -31,12 +32,15 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
 
+    # Answers on questions:
     num_1 = models.FloatField(label="Введите ответ сюда:")
     num_2 = models.FloatField(label="Введите ответ сюда:")
     num_3 = models.FloatField(label="Введите ответ сюда:")
     num_4 = models.FloatField(label="Введите ответ сюда:")
     num_5 = models.FloatField(label="Введите ответ сюда:")
     total_payoff = models.FloatField(initial=0)
+
+    # Choice made by the leader of the game
     options = models.IntegerField(
         choices=[
             [0, "0 очков мне и 500 очков сопернику"],
@@ -50,6 +54,19 @@ class Player(BasePlayer):
         label="Варианты:",
     )
 
+    # General information on the participant
+    first_name = models.StringField(label="Фамилия")
+    second_name = models.StringField(label="Имя")
+    gender = models.IntegerField(
+        choices=[[0, "Мужской"], [1, "Женский"]],
+        widget=widgets.RadioSelect,
+        label="Выберите пол: ",
+    )
+    university = models.StringField(label="Название университета")
+    major = models.StringField(label="Образовательная программа")
+    card_number = models.StringField(
+        label="Номер банковской карты (для перевода выигрыша):"
+    )
     # Variables used to get around @staticmethods
     current_question = models.IntegerField(initial=1)
     current_answer = models.FloatField()
@@ -140,6 +157,17 @@ class WaitLeaderPage(WaitPage):
 
 
 class FinalPage(Page):
+
+    form_model = "player"
+    form_fields = [
+        "first_name",
+        "second_name",
+        "gender",
+        "university",
+        "major",
+        "card_number",
+    ]
+
     @staticmethod
     def vars_for_template(player):
         winnings_mapping = {0: 0, 1: 100, 2: 200, 3: 300, 4: 400, 5: 500}
