@@ -1,0 +1,52 @@
+{{ block title }}
+    <title>
+        Results
+    </title>
+{{ endblock }}
+
+{{ block scripts }}
+    <script>
+        // document.querySelector('label.col-form-label').innerHTML = "Введите ответ сюда:"
+        // document.querySelector('#id_number_passed').value = ""
+    </script>
+{{ endblock }}
+
+{{ block styles }}
+    {% load static %}
+        <link rel="stylesheet" href="{% static 'styles/qstyles.css' %}">
+
+    <style>
+        .gif-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .form-container {
+            margin-top: 50px;
+        }
+    </style>
+{{ endblock }}
+
+{{ block content }}
+    <div class="main-container">
+        <div class="header-container">
+            <h3>
+                Вы выиграли 
+                {{ if player.id_in_group == 1 }}
+                    {{ winnings }} 
+                {{ else }}
+                    {{ winnings }}
+                {{ endif }}
+                очков! Игра окончена!
+                Убедительно просим вас заполнить следующую анкету.
+            </h3>
+        <div class="gif-container">
+            <img src="https://acegif.com/wp-content/uploads/thumbs-up-78.gif" alt="Тут должна быть гифка" width="500">
+        </div>
+    </div>
+    <div class="form-container">
+        {{ formfields }}
+        {{ next_button }}
+    </div>
+
+{{ endblock }}
