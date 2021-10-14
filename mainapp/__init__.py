@@ -15,14 +15,14 @@ Your app description
 class Utility:
 
     # Function used to send email once opponent is done with experiment
-    def send_email(to_addr, first_name):
+    def send_email(to_addr, first_name, rwin):
         with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
             smtp.ehlo()
             smtp.starttls()
             smtp.ehlo()
             smtp.login(ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD)
             subject = "Эксперимент Поведек"
-            body = f"Здравствуйте {first_name}, недавно Вы участвовали в нашем эксперименте, ваш соперник только что закончил игру, посмотреть результат можно здесь:\n{WEBSITE_URL}"
+            body = f"Здравствуйте {first_name},\n\nНедавно Вы участвовали в нашем эксперименте, ваш соперник только что закончил игру:\nПоздравляем Вы выиграли {rwin} очков!!\nТакже напоминаем, что теперь вы имеется шанс выиграть 700 рублей. Удачи!!\n\nНаша команда благодарит Вас за участие!"
             msg = MIMEText(body, "plain", "utf-8")
             msg["Subject"] = Header(subject, "utf-8")
             msg["From"] = ADMIN_EMAIL
@@ -192,7 +192,7 @@ class CalcResultsPage(WaitPage):
         recipient.final_payoff = 500 - leader.final_payoff
 
         # Once leader made a decision send email to the other player
-        Utility.send_email(recipient.mail, recipient.first_name)
+        Utility.send_email(recipient.mail, recipient.first_name, recipient.final_payoff)
 
 
 class FinalPage(Page):
