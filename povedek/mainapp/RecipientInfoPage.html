@@ -1,0 +1,14 @@
+{{ block title }}
+    Results
+{{ endblock }}
+
+{{ block styles }}
+    {% load static %}
+        <link rel="stylesheet" href="{% static 'styles/qstyles.css' %}">
+{{ endblock }}
+
+{{ block content }}
+    <h3>Пожалуйста укажите свои данные</h3>
+    {{ formfields }}
+    {{ next_button }}
+{{ endblock }}
