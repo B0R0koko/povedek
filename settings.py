@@ -34,6 +34,9 @@ USE_POINTS = True
 ADMIN_USERNAME = "admin"
 # for security, best to set admin password in an environment variable
 ADMIN_PASSWORD = environ.get("OTREE_ADMIN_PASSWORD")
+ADMIN_EMAIL = environ.get("ADMIN_EMAIL")
+ADMIN_EMAIL_PASSWORD = environ.get("ADMIN_EMAIL_PASSWORD")
+WEBSITE_URL = environ.get("WEBSITE_URL")
 
 DEMO_PAGE_INTRO_HTML = """ """
 

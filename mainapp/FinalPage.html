@@ -33,9 +33,9 @@
             <h3>
                 Вы выиграли 
                 {{ if player.id_in_group == 1 }}
-                    {{ winnings }} 
+                    {{ player.final_payoff }}
                 {{ else }}
-                    {{ winnings }}
+                    {{ player.final_payoff }}
                 {{ endif }}
                 очков! Игра окончена!
                 Убедительно просим вас заполнить следующую анкету.
@@ -45,8 +45,10 @@
         </div>
     </div>
     <div class="form-container">
-        {{ formfields }}
-        {{ next_button }}
+        {{ if player.id_in_group == 2}}
+            {{ formfields }}
+            {{ next_button }}
+        {{ endif }}
     </div>
 
 {{ endblock }}
