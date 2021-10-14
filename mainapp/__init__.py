@@ -3,7 +3,7 @@ from otree.api import *
 from random import randint
 from email.mime.text import MIMEText
 from email.header import Header
-from settings import ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, WEBSITE_URL
+from settings import ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD
 import smtplib
 
 
