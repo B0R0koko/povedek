@@ -22,7 +22,7 @@ class Utility:
             smtp.ehlo()
             smtp.login(ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD)
             subject = "Эксперимент Поведек"
-            body = f"Здравствуйте {first_name},\n\nНедавно Вы участвовали в нашем эксперименте, ваш соперник только что закончил игру:\nПоздравляем Вы выиграли {rwin} очков!!\nТакже напоминаем, что теперь вы имеется шанс выиграть 700 рублей. Удачи!!\n\nНаша команда благодарит Вас за участие!"
+            body = f"Здравствуйте {first_name},\n\nНедавно Вы участвовали в нашем эксперименте, ваш соперник только что закончил игру:\nПоздравляем Вы выиграли {rwin} очков!!\nТакже напоминаем, что теперь у вас имеется шанс выиграть 700 рублей. Удачи!!\n\nНаша команда благодарит Вас за участие!"
             msg = MIMEText(body, "plain", "utf-8")
             msg["Subject"] = Header(subject, "utf-8")
             msg["From"] = ADMIN_EMAIL
@@ -65,18 +65,7 @@ class Player(BasePlayer):
     final_payoff = models.IntegerField(initial=0)
 
     # Choice made by the leader of the game
-    options = models.IntegerField(
-        choices=[
-            [0, "0 очков мне и 500 очков сопернику"],
-            [1, "100 очков мне и 400 очков сопернику."],
-            [2, "200 очков мне и 300 очков сопернику."],
-            [3, "300 очков мне и 200 очков сопернику"],
-            [4, "400 очков мне и 100 очков сопернику"],
-            [5, "500 очков мне и 0 очков сопернику."],
-        ],
-        widget=widgets.RadioSelect,
-        label="Варианты:",
-    )
+    options = models.IntegerField(label="Выберите свой выигрыш: ", min=0, max=500)
 
     # General information on the participant
     first_name = models.StringField(label="Имя")
@@ -89,9 +78,6 @@ class Player(BasePlayer):
     )
     university = models.StringField(label="Название университета")
     major = models.StringField(label="Образовательная программа")
-    card_number = models.StringField(
-        label="Номер банковской карты (для перевода выигрыша):"
-    )
     # Variables used to get around @staticmethods
     current_answer = models.FloatField()
     question_num = models.IntegerField(initial=0)
