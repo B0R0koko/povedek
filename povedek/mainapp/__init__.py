@@ -4,16 +4,13 @@ from random import randint
 from email.mime.text import MIMEText
 from email.header import Header
 
-# from settings import ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD
+from settings import ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD
 import smtplib
 
 
 doc = """
 Your app description
 """
-
-ADMIN_EMAIL = "mihail.borokoko@gmail.com"
-ADMIN_EMAIL_PASSWORD = "Gibberish1234"
 
 
 class Utility:
@@ -47,7 +44,6 @@ class Constants(BaseConstants):
         "Угадайте расстояние между Осло и Астраханью",
     ]
     answers = [9362, 2579, 6814, 7984, 2852]
-    winnings_mapping = {0: 0, 1: 100, 2: 200, 3: 300, 4: 400, 5: 500}
 
 
 class Subsession(BaseSubsession):
@@ -66,15 +62,17 @@ class Player(BasePlayer):
     ans_2 = models.IntegerField(label="Введите ответ сюда:")
     ans_3 = models.IntegerField(label="Введите ответ сюда:")
     ans_4 = models.IntegerField(label="Введите ответ сюда:")
-    total_payoff = models.IntegerField(initial=0)
+    initial_payoff = models.IntegerField(initial=0)
+    initial_opponent_payoff = models.IntegerField(initial=0)
     final_payoff = models.IntegerField(initial=0)
 
     # Choice made by the leader of the game
-    options = models.IntegerField(label="Выберите свой выигрыш: ", min=0, max=500)
+    chosen_payoff = models.IntegerField(label="Выберите свой выигрыш: ", min=0, max=500)
 
     # General information on the participant
     first_name = models.StringField(label="Имя")
     second_name = models.StringField(label="Фамилия")
+    age = models.IntegerField(label="Возраст")
     mail = models.StringField(label="Почта")
     gender = models.IntegerField(
         choices=[[0, "Мужской"], [1, "Женский"]],
@@ -83,10 +81,10 @@ class Player(BasePlayer):
     )
     university = models.StringField(label="Название университета")
     major = models.StringField(label="Образовательная программа")
+    year = models.IntegerField(label="Курс")
     # Variables used to get around @staticmethods
     current_answer = models.FloatField()
     question_num = models.IntegerField(initial=0)
-    opponent_payoff = models.IntegerField()
     is_winner = models.BooleanField()
 
 
@@ -126,15 +124,24 @@ class RecipientInfoPage(Page):
     form_fields = [
         "first_name",
         "second_name",
+        "age",
         "mail",
         "gender",
         "university",
         "major",
+        "year",
     ]
 
     @staticmethod
     def is_displayed(player):
         return player.id_in_group == 1
+
+    @staticmethod
+    def error_message(player, values):
+        if values["age"] < 0:
+            return "Возраст не может быть отрицательным"
+        elif values["age"] > 80:
+            return "Пожалуйста укажите свой настоящий возраст"
 
 
 class WaitLeaderPage(WaitPage):
@@ -151,16 +158,11 @@ class WaitRecipientPage(WaitPage):
 
 class DecisionPage(Page):
     form_model = "player"
-    form_fields = ["options"]
+    form_fields = ["chosen_payoff"]
 
     @staticmethod
     def is_displayed(player):
         return player.id_in_group == 2
-
-    @staticmethod
-    def before_next_page(player, timeout_happened):
-        player.final_payoff = Constants.winnings_mapping[player.options]
-        player.get_player_by_id(1).final_payoff = 500 - player.final_payoff
 
 
 class CalcResultsPage(WaitPage):
@@ -173,15 +175,27 @@ class CalcResultsPage(WaitPage):
             leader_answers, recipient_answers, Constants.answers
         ):
             if abs(cor - lans) < abs(cor - rans):
-                leader.total_payoff += 100
+                leader.initial_payoff += 100
             elif abs(cor - lans) == abs(cor - rans):
                 if randint(0, 1):
-                    leader.total_payoff += 100
+                    leader.initial_payoff += 100
                 else:
-                    recipient.total_payoff += 100
+                    recipient.initial_payoff += 100
             else:
-                recipient.total_payoff += 100
+                recipient.initial_payoff += 100
 
+        leader.initial_opponent_payoff, recipient.initial_opponent_payoff = (
+            recipient.initial_payoff,
+            leader.initial_payoff,
+        )
+
+
+class CalcFinalResultsPage(WaitPage):
+    @staticmethod
+    def after_all_players_arrive(group):
+        recipient, leader = group.get_players()
+        leader.final_payoff = leader.chosen_payoff
+        recipient.final_payoff = 500 - leader.chosen_payoff
         # Once leader made a decision send email to the other player
         Utility.send_email(recipient.mail, recipient.first_name, recipient.final_payoff)
 
@@ -191,11 +205,20 @@ class FinalPage(Page):
     form_fields = [
         "first_name",
         "second_name",
+        "age",
         "mail",
         "gender",
         "university",
         "major",
+        "year",
     ]
+
+    @staticmethod
+    def error_message(player, values):
+        if values["age"] < 0:
+            return "Возраст не может быть отрицательным"
+        elif values["age"] > 80:
+            return "Пожалуйста укажите свой настоящий возраст"
 
 
 page_sequence = [
@@ -210,5 +233,6 @@ page_sequence = [
     CalcResultsPage,
     DecisionPage,
     WaitLeaderPage,
+    CalcFinalResultsPage,
     FinalPage,
 ]
