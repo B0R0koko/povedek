@@ -3,13 +3,17 @@ from otree.api import *
 from random import randint
 from email.mime.text import MIMEText
 from email.header import Header
-from settings import ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD
+
+# from settings import ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD
 import smtplib
 
 
 doc = """
 Your app description
 """
+
+ADMIN_EMAIL = "mihail.borokoko@gmail.com"
+ADMIN_EMAIL_PASSWORD = "Gibberish1234"
 
 
 class Utility:
@@ -43,6 +47,7 @@ class Constants(BaseConstants):
         "Угадайте расстояние между Осло и Астраханью",
     ]
     answers = [9362, 2579, 6814, 7984, 2852]
+    winnings_mapping = {0: 0, 1: 100, 2: 200, 3: 300, 4: 400, 5: 500}
 
 
 class Subsession(BaseSubsession):
@@ -56,11 +61,11 @@ class Group(BaseGroup):
 class Player(BasePlayer):
 
     # Answers on questions:
-    ans_0 = models.FloatField(label="Введите ответ сюда:")
-    ans_1 = models.FloatField(label="Введите ответ сюда:")
-    ans_2 = models.FloatField(label="Введите ответ сюда:")
-    ans_3 = models.FloatField(label="Введите ответ сюда:")
-    ans_4 = models.FloatField(label="Введите ответ сюда:")
+    ans_0 = models.IntegerField(label="Введите ответ сюда:")
+    ans_1 = models.IntegerField(label="Введите ответ сюда:")
+    ans_2 = models.IntegerField(label="Введите ответ сюда:")
+    ans_3 = models.IntegerField(label="Введите ответ сюда:")
+    ans_4 = models.IntegerField(label="Введите ответ сюда:")
     total_payoff = models.IntegerField(initial=0)
     final_payoff = models.IntegerField(initial=0)
 
@@ -81,7 +86,7 @@ class Player(BasePlayer):
     # Variables used to get around @staticmethods
     current_answer = models.FloatField()
     question_num = models.IntegerField(initial=0)
-    opponent_payoff = models.FloatField()
+    opponent_payoff = models.IntegerField()
     is_winner = models.BooleanField()
 
 
@@ -152,6 +157,11 @@ class DecisionPage(Page):
     def is_displayed(player):
         return player.id_in_group == 2
 
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        player.final_payoff = Constants.winnings_mapping[player.options]
+        player.get_player_by_id(1).final_payoff = 500 - player.final_payoff
+
 
 class CalcResultsPage(WaitPage):
     @staticmethod
@@ -171,10 +181,6 @@ class CalcResultsPage(WaitPage):
                     recipient.total_payoff += 100
             else:
                 recipient.total_payoff += 100
-
-        winnings_mapping = {0: 0, 1: 100, 2: 200, 3: 300, 4: 400, 5: 500}
-        leader.final_payoff = winnings_mapping[leader.options]
-        recipient.final_payoff = 500 - leader.final_payoff
 
         # Once leader made a decision send email to the other player
         Utility.send_email(recipient.mail, recipient.first_name, recipient.final_payoff)
@@ -201,8 +207,8 @@ page_sequence = [
     QuestionPage,
     RecipientInfoPage,
     WaitRecipientPage,
+    CalcResultsPage,
     DecisionPage,
     WaitLeaderPage,
-    CalcResultsPage,
     FinalPage,
 ]
