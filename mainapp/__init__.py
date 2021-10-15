@@ -125,7 +125,6 @@ class RecipientInfoPage(Page):
         "gender",
         "university",
         "major",
-        "card_number",
     ]
 
     @staticmethod
@@ -190,7 +189,6 @@ class FinalPage(Page):
         "gender",
         "university",
         "major",
-        "card_number",
     ]
 
 
