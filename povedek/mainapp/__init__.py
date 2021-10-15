@@ -3,13 +3,17 @@ from otree.api import *
 from random import randint
 from email.mime.text import MIMEText
 from email.header import Header
-from settings import ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD, WEBSITE_URL
+
+# from settings import ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD
 import smtplib
 
 
 doc = """
 Your app description
 """
+
+ADMIN_EMAIL = "mihail.borokoko@gmail.com"
+ADMIN_EMAIL_PASSWORD = "Gibberish1234"
 
 
 class Utility:
@@ -22,7 +26,7 @@ class Utility:
             smtp.ehlo()
             smtp.login(ADMIN_EMAIL, ADMIN_EMAIL_PASSWORD)
             subject = "Эксперимент Поведек"
-            body = f"Здравствуйте {first_name},\n\nНедавно Вы участвовали в нашем эксперименте, ваш соперник только что закончил игру:\nПоздравляем Вы выиграли {rwin} очков!!\nТакже напоминаем, что теперь вы имеется шанс выиграть 700 рублей. Удачи!!\n\nНаша команда благодарит Вас за участие!"
+            body = f"Здравствуйте {first_name},\n\nНедавно Вы участвовали в нашем эксперименте, ваш соперник только что закончил игру:\nПоздравляем Вы выиграли {rwin} очков!!\nТакже напоминаем, что теперь у вас имеется шанс выиграть 700 рублей. Удачи!!\n\nНаша команда благодарит Вас за участие!"
             msg = MIMEText(body, "plain", "utf-8")
             msg["Subject"] = Header(subject, "utf-8")
             msg["From"] = ADMIN_EMAIL
@@ -43,6 +47,7 @@ class Constants(BaseConstants):
         "Угадайте расстояние между Осло и Астраханью",
     ]
     answers = [9362, 2579, 6814, 7984, 2852]
+    winnings_mapping = {0: 0, 1: 100, 2: 200, 3: 300, 4: 400, 5: 500}
 
 
 class Subsession(BaseSubsession):
@@ -56,27 +61,16 @@ class Group(BaseGroup):
 class Player(BasePlayer):
 
     # Answers on questions:
-    ans_0 = models.FloatField(label="Введите ответ сюда:")
-    ans_1 = models.FloatField(label="Введите ответ сюда:")
-    ans_2 = models.FloatField(label="Введите ответ сюда:")
-    ans_3 = models.FloatField(label="Введите ответ сюда:")
-    ans_4 = models.FloatField(label="Введите ответ сюда:")
+    ans_0 = models.IntegerField(label="Введите ответ сюда:")
+    ans_1 = models.IntegerField(label="Введите ответ сюда:")
+    ans_2 = models.IntegerField(label="Введите ответ сюда:")
+    ans_3 = models.IntegerField(label="Введите ответ сюда:")
+    ans_4 = models.IntegerField(label="Введите ответ сюда:")
     total_payoff = models.IntegerField(initial=0)
     final_payoff = models.IntegerField(initial=0)
 
     # Choice made by the leader of the game
-    options = models.IntegerField(
-        choices=[
-            [0, "0 очков мне и 500 очков сопернику"],
-            [1, "100 очков мне и 400 очков сопернику."],
-            [2, "200 очков мне и 300 очков сопернику."],
-            [3, "300 очков мне и 200 очков сопернику"],
-            [4, "400 очков мне и 100 очков сопернику"],
-            [5, "500 очков мне и 0 очков сопернику."],
-        ],
-        widget=widgets.RadioSelect,
-        label="Варианты:",
-    )
+    options = models.IntegerField(label="Выберите свой выигрыш: ", min=0, max=500)
 
     # General information on the participant
     first_name = models.StringField(label="Имя")
@@ -89,13 +83,10 @@ class Player(BasePlayer):
     )
     university = models.StringField(label="Название университета")
     major = models.StringField(label="Образовательная программа")
-    card_number = models.StringField(
-        label="Номер банковской карты (для перевода выигрыша):"
-    )
     # Variables used to get around @staticmethods
     current_answer = models.FloatField()
     question_num = models.IntegerField(initial=0)
-    opponent_payoff = models.FloatField()
+    opponent_payoff = models.IntegerField()
     is_winner = models.BooleanField()
 
 
@@ -139,7 +130,6 @@ class RecipientInfoPage(Page):
         "gender",
         "university",
         "major",
-        "card_number",
     ]
 
     @staticmethod
@@ -167,6 +157,11 @@ class DecisionPage(Page):
     def is_displayed(player):
         return player.id_in_group == 2
 
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        player.final_payoff = Constants.winnings_mapping[player.options]
+        player.get_player_by_id(1).final_payoff = 500 - player.final_payoff
+
 
 class CalcResultsPage(WaitPage):
     @staticmethod
@@ -187,10 +182,6 @@ class CalcResultsPage(WaitPage):
             else:
                 recipient.total_payoff += 100
 
-        winnings_mapping = {0: 0, 1: 100, 2: 200, 3: 300, 4: 400, 5: 500}
-        leader.final_payoff = winnings_mapping[leader.options]
-        recipient.final_payoff = 500 - leader.final_payoff
-
         # Once leader made a decision send email to the other player
         Utility.send_email(recipient.mail, recipient.first_name, recipient.final_payoff)
 
@@ -204,7 +195,6 @@ class FinalPage(Page):
         "gender",
         "university",
         "major",
-        "card_number",
     ]
 
 
@@ -217,8 +207,8 @@ page_sequence = [
     QuestionPage,
     RecipientInfoPage,
     WaitRecipientPage,
+    CalcResultsPage,
     DecisionPage,
     WaitLeaderPage,
-    CalcResultsPage,
     FinalPage,
 ]

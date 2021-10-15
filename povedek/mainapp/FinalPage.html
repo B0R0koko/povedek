@@ -38,7 +38,6 @@
                     {{ player.final_payoff }}
                 {{ endif }}
                 очков! Игра окончена!
-                Убедительно просим вас заполнить следующую анкету.
             </h3>
         <div class="gif-container">
             <img src="https://acegif.com/wp-content/uploads/thumbs-up-78.gif" alt="Тут должна быть гифка" width="500">
@@ -46,6 +45,8 @@
     </div>
     <div class="form-container">
         {{ if player.id_in_group == 2}}
+            <b>Убедительно просим вас заполнить следующую анкету.</b>
+            <b>Для участия в розыгрыше требуется заполнить все поля снизу.</b>
             {{ formfields }}
             {{ next_button }}
         {{ endif }}
