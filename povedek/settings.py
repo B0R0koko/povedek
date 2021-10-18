@@ -4,7 +4,7 @@ from os import environ
 SESSION_CONFIGS = [
     dict(
         name="mainapp",
-        app_sequence=["mainapp"],
+        app_sequence=["userform", "mainapp"],
         num_demo_participants=4,
         display_name="Povedek Experiment",
     )
@@ -20,7 +20,19 @@ SESSION_CONFIG_DEFAULTS = dict(
 )
 
 
-PARTICIPANT_FIELDS = []
+PARTICIPANT_FIELDS = [
+    "first_name",
+    "second_name",
+    "is_dropout",
+    "is_leader",
+    "question_num",
+    "ans_0",
+    "ans_1",
+    "ans_2",
+    "ans_3",
+    "ans_4",
+    "mail",
+]
 SESSION_FIELDS = []
 
 # ISO-639 code

@@ -1,0 +1,20 @@
+{{ block title }}
+    <title>
+        Анкета
+    </title>
+{{ endblock }}
+
+{{ block styles }}
+    {% load static %}
+        <link rel="stylesheet" href="{% static 'styles/qstyles.css' %}">
+{{ endblock }}
+
+{{ block content }}
+    <h3>Для участия в игре необходимо заполнить все поля в анкете</h3>
+    {{ formfields }}
+    <div>
+        <p>Игра начнется сразу после нажатия кнопки "Next"</p>
+    </div>
+    {{ next_button }}
+
+{{ endblock }}

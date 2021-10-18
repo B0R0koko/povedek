@@ -1,0 +1,14 @@
+{{ block title }}
+    <title>
+        Отключен
+    </title>
+{{ endblock }}
+
+{{ block styles }}
+    {% load static %}
+        <link rel="stylesheet" href="{% static 'styles/qstyles.css' %}">
+{{ endblock }}
+
+{{ block content }}
+    <h4>Вы были удалены из поиска игры. Для участия в подборе игроков требуется заполнить все необходимые поля</h4>
+{{ endblock }}
